@@ -1,0 +1,42 @@
+package com.xr.wbs;
+
+import com.xr.bpo.RfInterfaceBPO;
+
+/**
+ * RF执行的webservice
+ * 
+ * @author xx
+ * 
+ */
+public class RfInterface {
+	/**
+	 * 调用数据库过程
+	 * 
+	 * @param prcname
+	 *            过程名
+	 * @param paras
+	 *            过程需要的参数
+	 * @return 1 执行成功 0 失败
+	 * @throws Exception
+	 * @remark 不支持过程返回
+	 */
+	public String executeRfPrc(String prcname, String params) throws Exception {
+		return new RfInterfaceBPO().executeRfPrc(prcname, params);
+	}
+
+	/**
+	 * 调用数据库函数
+	 * 
+	 * @param funname
+	 *            函数名
+	 * @param paras
+	 *            过程需要的参数
+	 * @return 返回函数执行结果
+	 * @throws Exception
+	 */
+	public String executeRfFunction(String funname, String paras)
+			throws Exception {
+		return new RfInterfaceBPO().executeRfFunction(funname, paras);
+	}
+
+}

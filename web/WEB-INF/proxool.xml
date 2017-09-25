@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<something-else-entirely>
+<proxool>
+    <alias>tynDB</alias>
+    <driver-url>jdbc:oracle:thin:@power.tongwei.com:1551:test</driver-url>
+    <driver-class>oracle.jdbc.driver.OracleDriver</driver-class>
+    <driver-properties>
+        <property name="user" value="cux"/>
+        <property name="password" value="tw618618"/>
+	</driver-properties>
+	<house-keeping-sleep-time>90000</house-keeping-sleep-time> 
+	<prototype-count>5</prototype-count> 
+	<maximum-connection-count>10</maximum-connection-count> 
+	<minimum-connection-count>5</minimum-connection-count>
+	<simultaneous-build-throttle>50</simultaneous-build-throttle>
+	<test-before-use>true</test-before-use>
+    <test-after-use>true</test-after-use>
+    <house-keeping-test-sql>select 1 from dual</house-keeping-test-sql>
+  </proxool>
+</something-else-entirely>

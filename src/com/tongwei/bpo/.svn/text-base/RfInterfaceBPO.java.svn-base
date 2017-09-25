@@ -1,0 +1,145 @@
+package com.xr.bpo;
+
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.Types;
+import com.xr.db.DbConn;
+
+/**
+ * RF 程序通过webservice 调用数据库方法
+ * 
+ * @author xx
+ * 
+ */
+public class RfInterfaceBPO {
+	/**
+	 * 调用数据库过程
+	 * 
+	 * @param prcname
+	 *            过程名
+	 * @param paras
+	 *            过程需要的参数
+	 * @return 1 执行成功 0 失败
+	 * @throws Exception
+	 * @remark 不支持过程返回
+	 */
+	public String executeRfPrc(String prcname, String paras) throws Exception {
+		if (paras.equals(""))
+			return "1";
+		DbConn db = null;
+		Connection conn = null;
+		CallableStatement cst = null;
+		String ps[] = paras.split(",");
+		try {
+			db = new DbConn();
+			conn = db.getConnection();
+			conn.setAutoCommit(false);
+			int l = ps.length;
+			// 组合过程参数
+			String sql = "{call " + prcname + "(";
+			for (int i = 0; i < l; i++) {
+				sql += "?,";
+			}
+			if (sql.endsWith(","))
+				sql = sql.substring(0, sql.length() - 1);
+			sql += ")}";
+			cst = conn.prepareCall(sql);
+			// 设置过程参数
+			for (int i = 0; i < l; i++) {
+				if (ps[i].equals("")) {
+					cst.setNull((i + 1), Types.VARCHAR);
+				} else {
+					cst.setString((i + 1), ps[i]);
+				}
+			}
+			cst.execute();
+			return "1";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "0";
+		} finally {
+			try {
+				if (cst != null)
+					cst.close();
+			} catch (Exception e) {
+			}
+			try {
+				if (conn != null) {
+					conn.close();
+				}
+				if (db != null)
+					db.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * 调用数据库函数
+	 * 
+	 * @param funname
+	 *            函数名
+	 * @param paras
+	 *            过程需要的参数
+	 * @return 返回函数执行结果
+	 * @throws Exception
+	 */
+	public String executeRfFunction(String funname, String paras)
+			throws Exception {
+		DbConn db = null;
+		Connection conn = null;
+		CallableStatement cst = null;
+		String ps[] =paras.equals("")?new String[0]: paras.split(",");
+		String msg = "0";
+		try {
+			db = new DbConn();
+			conn = db.getConnection();
+			conn.setAutoCommit(false);
+			int l = ps.length;
+			// 组合过程参数
+			String sql = "{?=call " + funname + "(";
+			for (int i = 0; i < l; i++) {
+				sql += "?,";
+			}
+			if (sql.endsWith(","))
+				sql = sql.substring(0, sql.length() - 1);
+			sql += ")}";
+			cst = conn.prepareCall(sql);
+			// 设置过程参数
+			for (int i = 0; i < l; i++) {
+				if (ps[i].equals("")) {
+					cst.setNull((i + 2), Types.VARCHAR);
+				} else {
+					cst.setString((i + 2), ps[i]);
+				}
+			}
+			cst.registerOutParameter(1, Types.VARCHAR);
+			cst.execute();
+			msg = cst.getString(1);
+			return msg;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "{\"RESULT\":\"1\",\"MSG\":\"函数调用异常，请检查函数名和参数是否正确!\"}";
+		} finally {
+			try {
+				if (cst != null)
+					cst.close();
+			} catch (Exception e) {
+			}
+			try {
+				if (conn != null) {
+					conn.close();
+				}
+				if (db != null)
+					db.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public static void main(String[] args) throws Exception {
+
+	}
+}

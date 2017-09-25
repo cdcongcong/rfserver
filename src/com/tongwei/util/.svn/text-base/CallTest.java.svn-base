@@ -1,0 +1,36 @@
+package com.xr.util;
+
+import org.apache.axis.client.Call;
+import org.apache.axis.client.Service;
+
+/**
+ * 测试
+ * 
+ * @author xx
+ * 
+ */
+public class CallTest {
+
+	public void run() {
+		String url = "http://localhost:9400/cqjsrfwbs/services/RfInterface";
+		Service service = null;
+		Call call = null;
+		try {
+			service = new Service();
+			call = (Call) service.createCall();
+			call.setTargetEndpointAddress(new java.net.URL(url));
+			call.setOperationName("executeRfFunction");// 要调用的方法名
+			Object o = call.invoke(new Object[] { "pkg_mfg.user_logon","1" });
+			System.out.println(o);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public static void main(String[] args) throws Exception {
+
+		new CallTest().run();
+	}
+
+}
